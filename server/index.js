@@ -4,14 +4,15 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const PostsRoutes = require("./routes/Posts.js");
 const app = express();
-app.use('/posts',PostsRoutes)
+
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 
 app.use(cors());
+app.use("/posts", PostsRoutes);
 const CONNECTION_URL =
-'mongodb+srv://Afnan:Afnan1234@mem.erxgs.mongodb.net/<dbname>?retryWrites=true&w=majority'
-  
+  "mongodb+srv://Afnan:Afnan1234@mem.erxgs.mongodb.net/<dbname>?retryWrites=true&w=majority";
+
 const PORT = process.env.port || 5000;
 
 mongoose
@@ -21,4 +22,4 @@ mongoose
   )
   .catch((error) => console.log(error.message));
 
-  mongoose.set('useFindAndModify',false)
+mongoose.set("useFindAndModify", false);
