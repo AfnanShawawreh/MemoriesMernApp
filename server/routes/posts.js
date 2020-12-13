@@ -9,3 +9,7 @@ router.get("/", postscontroller.getPosts);
 router.post("/", postscontroller.createPost);
 
 module.exports = router;
+
+
+
+  
