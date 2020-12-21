@@ -1,9 +1,11 @@
-const PostsMassage = require("../models/postMassage");
+const mongoose = require("mongoose");
+const { update } = require("../models/postMessages");
+const PostMessage = require("../models/postMessages");
 
 module.exports = {
   getPosts: async (req, res) => {
     try {
-      const postMessages = await PostsMassage.find();
+      const postMessages = await PostMessage.find();
 
       res.status(200).json(postMessages);
     } catch (error) {
@@ -13,7 +15,7 @@ module.exports = {
 
   createPost: async (req, res) => {
     const { title, message, selectedFile, creator, tags } = req.body;
-    const newPostMessage = new PostsMassage({
+    const newPostMessage = new PostMessage({
       title,
       message,
       selectedFile,
@@ -23,9 +25,41 @@ module.exports = {
     try {
       await newPostMessage.save();
       res.status(201).json(newPostMessage);
-      // console.log(newPostMessage)
+   
     } catch (error) {
       res.status(404).json({ message: error.message });
     }
   },
+  updatePost : async (req, res) => {
+    console.log('fnnnh')
+    const { id } = req.params;
+    const { title, message, creator, selectedFile, tags } = req.body;
+    
+    if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No post with id: ${id}`);
+
+    const updatedPost = { creator, title, message, tags, selectedFile, _id: id };
+
+    await PostMessage.findByIdAndUpdate(id, updatedPost, { new: true });
+
+    res.json(updatedPost);
+},
+deletePost:async (req, res) => {
+  console.log('fnnnhh44')
+
+  const { id } = req.params;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No post with id: ${id}`);
+
+  await PostMessage.findByIdAndRemove(id);
+
+  res.json({ message: "Post deleted successfully." });
+ 
+},
+likePost: async (req, res)=>{
+  const {id}=req.params
+  if (!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send(`No post with id: ${id}`);
+const post = await PostMessage.findById(id);
+const updatedPost= await PostMessage.findByIdAndUpdate(id,{likeCount: post.likeCount + 1}, {new:true})
+res.json(updatedPost)
+}
 };
